@@ -15,7 +15,7 @@
 //   \==========/
 
 var bDebug = false;
-var telegramToken = "<YOUR TELEGRAM BOT TOKEN HERE>";
+var telegramToken = ""; // <YOUR TELEGRAM BOT TOKEN HERE>
 
 /*  ===========================
 		Functions
