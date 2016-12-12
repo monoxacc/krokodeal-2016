@@ -39,6 +39,10 @@ function sendTelegramMessage(chat_id, msg) {
 function handleTelegramNotifyChanged(e) {
 	var chkTelegramNotify = e.target;
 	if (chkTelegramNotify.checked) {
+		if(telegramToken == "") { //check telegramToken is set
+			alert("Please set your Telegram-Bot token!");
+			return 0;
+		}
 		var code = getRandomString();
 		var inputNewChatId = prompt("Please set your chat_id here.\r\nIf you have no chat_id, leave the field blank and send the following code to your Telegram-Bot, AFTER SENDING press OK\r\n\r\n" + code, telegramChatId);
 		if (inputNewChatId != null) { // user pressed OK
