@@ -6,9 +6,8 @@ Krokodeal hunt script for Greasemonkey.
 
 
 
-
 *Thanks to the following persons for distribute their software for free:*
-- Eli Grey
-  - [FileSaver.js](https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js)
-- Anthony Lieuallen
-  - [grant-none-shim.js](https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js)
+- <sub>Eli Grey
+  - <sub>[FileSaver.js](https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js)
+- <sub>Anthony Lieuallen
+  - <sub>[grant-none-shim.js](https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js)
