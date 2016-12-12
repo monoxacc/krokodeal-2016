@@ -7,7 +7,7 @@
 // @exclude     https://www.mydealz.de/xmas-game*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
 // @require     https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js
-// @version     2016.10
+// @version     2016.11
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -41,6 +41,7 @@ function handleTelegramNotifyChanged(e) {
 	if (chkTelegramNotify.checked) {
 		if(telegramToken == "") { //check telegramToken is set
 			alert("Please set your Telegram-Bot token!");
+			chkTelegramNotify.checked = false;
 			return 0;
 		}
 		var code = getRandomString();
