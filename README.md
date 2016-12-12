@@ -3,6 +3,9 @@ Krokodeal hunt script for Greasemonkey.
 
 #### This is an experimental script for testing purposes.
 
+### First Steps
+
+1. Set your Telegram Bot Token
 
 
 
