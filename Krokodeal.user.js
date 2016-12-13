@@ -107,16 +107,6 @@ function getRandomString() {
 	return Math.random().toString(36).substr(2, 9); //25 is max lenght
 }
 
-function setMessBoxText(text)
-{
-	var MessBox = document.getElementById("MessBox");
-	if(MessBox==null) 
-	{ alert("Konnte MessBox nicht finden!"); return; }
-
-	MessBox.innerHTML+=("</br>"+text);	
-	MessBox.scrollTop=MessBox.scrollHeight;
-}
-
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)
  * Using Math.round() will give you a non-uniform distribution!
@@ -201,48 +191,6 @@ function getKrokoCatchedText(requestDataContentHTML) {
 	}
 }
 
-/**
- * This function shouldn't be used anymore!
- * Or bann is incoming!
- */
-function redeemKrokokey()
-{
-	function handleResult(data,textStatus,jqXHR)
-	{
-		if(bDebug) {
-			console.log('redeemKrokokey.handleResult:');
-			console.log(data);
-			console.log(textStatus);
-			console.log(jqXHR);
-		}
-		alert(getKrokoCatchedText(data.data.content));
-	}
-
-	var txtKrokokey = document.getElementById("txtKrokokey");
-	if(txtKrokokey!=null)
-	{
-		var catchKey = txtKrokokey.value.trim();
-		if(catchKey!="")
-		{
-			if (confirm("You really want to redeem?\r\nYour key is "+catchKey)) {
-				$.ajax({
-					'type': 'POST',
-					'url': 'https://www.mydealz.de/mascotcards/claim',
-					'contentType': 'application/x-www-form-urlencoded',
-					'data': JSON.parse('{"key":"'+catchKey+'"}'),
-					'dataType': 'json',
-					'success': handleResult
-				});
-			}
-		}
-		else
-		{
-			txtKrokokey.style.backgroundColor = "orange";
-		}
-		txtKrokokey.value = "";
-	}
-}
-
 function initMessBox()
 {
 	var box = document.createElement('div');
@@ -300,27 +248,6 @@ function initMessBox()
 		var inputboxstyle = document.createAttribute("style");
 		inputboxstyle.value = "position:absolute;bottom:0px;";
 	inputbox.setAttributeNode(inputboxstyle);
-/* 	var txtKrokokey = document.createElement('input');
-		txtKrokokey.id = "txtKrokokey";
-		txtKrokokey.type = "text";
-		var txtClass = document.createAttribute("class");
-		txtClass.value = "input";
-	txtKrokokey.setAttributeNode(txtClass);
-		var txtStyle = document.createAttribute("style");
-		txtStyle.value = "color:black;";
-	txtKrokokey.setAttributeNode(txtStyle);
-	inputbox.appendChild(txtKrokokey);
-	
-	var btnKrokokey = document.createElement('input');
-		btnKrokokey.id = "btnKrokokey";
-		btnKrokokey.type = "button";
-		btnKrokokey.value = "redeem";
-		btnKrokokey.onclick = redeemKrokokey;
-		var btnClass = document.createAttribute("class");
-		btnClass.value = "btn btn--mode-highlight btn--mode-special";
-		btnKrokokey.setAttributeNode(btnClass);
-		//var btnStyle = document.createAttribute("style");
-	inputbox.appendChild(btnKrokokey); */
 		
 	var btnStats = document.createElement('input');
 		btnStats.id = "btnStats";
@@ -385,12 +312,6 @@ titleBlinking = (function () {
   };
 }()
 );
-
-function pushKeyInFrame(key) {
-   ifrm = document.createElement("IFRAME");
-   ifrm.setAttribute("src", "http://" + key);
-   document.body.appendChild(ifrm);
-}
 
 function handleKroko()
 {
