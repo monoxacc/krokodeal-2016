@@ -3,9 +3,13 @@ Krokodeal hunt script for Greasemonkey.
 
 #### This is an experimental script for testing purposes.
 
+- tested on Firefox only
+
 ### First Steps
 
-1. Set your Telegram Bot Token
+1. Install Greasemonkey
+2. Navigate to raw Krokodeal.user.js in this Repo
+3. Greasemonkey asks to install Script
 
 
 
