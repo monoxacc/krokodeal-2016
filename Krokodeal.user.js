@@ -7,7 +7,7 @@
 // @exclude     https://www.mydealz.de/xmas-game*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
 // @require     https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js
-// @version     2016.12
+// @version     2016.13
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -95,6 +95,23 @@ function handleTelegramNotifyChanged(e) {
 	GM_setValue("bTelegramNotify", chkTelegramNotify.checked);
 }
 
+/**
+ * Check for userban by using trading system search.
+ */
+function checkBanned() {
+	$.get('https://www.mydealz.de/xmas-game/trade',function() { 
+		//trade system is available at this point
+		var username = getUsername();
+		$.get('https://www.mydealz.de/search/xmas-game-trading-partner-search?q='+username,function(result) { 
+			if(result.data.suggestions.length == 1) {
+				alert("You are NOT banned!");
+			} else {
+				alert("Looks like you are banned!");
+			}
+		});
+	});
+}
+
 function getUsername() {
 	try {
 		return document.getElementById('user-profile-dropdown').getElementsByClassName('navDropDown-head-text')[0].innerText;
@@ -156,9 +173,9 @@ function createStatObj(intDate,bCatchable,sCatchKey)
 	return {date:intDate,catchable:bCatchable,key:sCatchKey};
 }
 
-function saveStatsAsFile()
+function saveStringAsFile(text)
 {
-	var blob = new Blob([GM_getValue("requeststats", "no logs")], {type: "text/plain;charset=utf-8"});
+	var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
 	var filename = getTimeStamp()+"_requestlog.txt"
 	saveAs(blob, filename);
 }
@@ -253,14 +270,16 @@ function initMessBox()
 		btnStats.id = "btnStats";
 		btnStats.type = "button";
 		btnStats.value = "logs";
-		btnStats.onclick = saveStatsAsFile;
+		btnStats.onclick = function() {
+			saveStringAsFile(GM_getValue("requeststats", "no logs"));
+		}
 		var btnClass = document.createAttribute("class");
 		btnClass.value = "text--backgroundPill";
 	btnStats.setAttributeNode(btnClass);
 	inputbox.appendChild(btnStats);
 	
 	var btnClearStats = document.createElement('input');
-		btnClearStats.id = "btnStats";
+		btnClearStats.id = "btnClearStats";
 		btnClearStats.type = "button";
 		btnClearStats.value = "clear logs";
 		btnClearStats.onclick = function(){
@@ -287,6 +306,16 @@ function initMessBox()
 		btnClass.value = "text--backgroundPill";
 	btnTelegramToken.setAttributeNode(btnClass);
 	inputbox.appendChild(btnTelegramToken);
+	
+	var btnCheckBann = document.createElement('input');
+		btnCheckBann.id = "btnCheckBann";
+		btnCheckBann.type = "button";
+		btnCheckBann.value = "am i banned?";
+		btnCheckBann.onclick = checkBanned;
+		var btnClass = document.createAttribute("class");
+		btnClass.value = "text--backgroundPill";
+		btnCheckBann.setAttributeNode(btnClass);
+	inputbox.appendChild(btnCheckBann);
 	
 	box.appendChild(inputbox);
 	
