@@ -46,7 +46,7 @@ function handleTelegramNotifyChanged(e) {
 			} else {
 				//TODO: test token api method getMe()
 				telegramToken = inputToken;
-				GM_setValue("telegramToken", telegramToken);
+				GM_setValue("telegramToken", inputToken);
 			}
 		}
 		var code = getRandomString();
@@ -64,7 +64,7 @@ function handleTelegramNotifyChanged(e) {
 						var success = d.result[0].message.text == code;
 						if(success) {
 							telegramChatId = d.result[0].message.chat.id;
-							GM_setValue("telegramChatId", telegramChatId);
+							GM_setValue("telegramChatId", d.result[0].message.chat.id);
 							sendTelegramMessage(telegramChatId, "Success! Your Chat_Id is "+telegramChatId);
 							try { document.getElementById('chkTelegramNotifyLabel').innerHTML = " Telegram-Notifier ["+telegramChatId+"]"; } catch(err) {}
 						} else {
@@ -92,7 +92,7 @@ function handleTelegramNotifyChanged(e) {
 		}
 	}
 	bTelegramNotify = chkTelegramNotify.checked;			
-	GM_setValue("bTelegramNotify", bTelegramNotify);
+	GM_setValue("bTelegramNotify", chkTelegramNotify.checked);
 }
 
 function getUsername() {
@@ -271,7 +271,7 @@ function initMessBox()
 		chkAutoCatch.checked = (bAutoCatch === 'true');
 		chkAutoCatch.onchange = function() {
 			bAutoCatch = chkAutoCatch.checked;
-			GM_setValue("bAutoCatch", bAutoCatch);
+			GM_setValue("bAutoCatch", chkAutoCatch.checked);
 		};
 		var chkAutoCatchLabel = document.createElement('label');
 		chkAutoCatchLabel.for = chkAutoCatch.id;
