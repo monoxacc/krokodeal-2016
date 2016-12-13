@@ -7,7 +7,7 @@
 // @exclude     https://www.mydealz.de/xmas-game*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
 // @require     https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js
-// @version     2016.12
+// @version     2016.13
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -156,9 +156,9 @@ function createStatObj(intDate,bCatchable,sCatchKey)
 	return {date:intDate,catchable:bCatchable,key:sCatchKey};
 }
 
-function saveStatsAsFile()
+function saveStringAsFile(text)
 {
-	var blob = new Blob([GM_getValue("requeststats", "no logs")], {type: "text/plain;charset=utf-8"});
+	var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
 	var filename = getTimeStamp()+"_requestlog.txt"
 	saveAs(blob, filename);
 }
@@ -253,14 +253,16 @@ function initMessBox()
 		btnStats.id = "btnStats";
 		btnStats.type = "button";
 		btnStats.value = "logs";
-		btnStats.onclick = saveStatsAsFile;
+		btnStats.onclick = function() {
+			saveStringAsFile(GM_getValue("requeststats", "no logs"));
+		};
 		var btnClass = document.createAttribute("class");
 		btnClass.value = "text--backgroundPill";
 	btnStats.setAttributeNode(btnClass);
 	inputbox.appendChild(btnStats);
 	
 	var btnClearStats = document.createElement('input');
-		btnClearStats.id = "btnStats";
+		btnClearStats.id = "btnClearStats";
 		btnClearStats.type = "button";
 		btnClearStats.value = "clear logs";
 		btnClearStats.onclick = function(){
