@@ -209,7 +209,7 @@ function redeemKrokokey()
 {
 	function handleResult(data,textStatus,jqXHR)
 	{
-		if(debug) {
+		if(bDebug) {
 			console.log('redeemKrokokey.handleResult:');
 			console.log(data);
 			console.log(textStatus);
@@ -408,8 +408,7 @@ function handleKroko()
 
 function goNextPage(sec)
 {
-	time = sec * 1000;
-	var countdown = time;
+	var countdown = sec * 1000;
 	var targetTime = (new Date()).getTime() + countdown;
 	clearInterval(idIntervalReloadspan);
 	idIntervalReloadspan = setInterval(function(){
@@ -469,7 +468,9 @@ $(document).ajaxComplete(function(e,r,s)
 			titleBlinking();
 			if(bAutoCatch === 'true') {
 				handleKroko();
-				if (!debug) goNextPage(getRandomInt(5,10));
+				if (!bDebug) {
+					goNextPage(getRandomInt(5,10));
+				}
 			}
 		}
 		else
@@ -477,11 +478,13 @@ $(document).ajaxComplete(function(e,r,s)
 			addStats(createStatObj(getTimeStamp(),false, null));
 			
 			setMessBoxSpanText("statusspan", "There is something...maybe next page!!", "red");
-			if (!debug) goNextPage(getRandomInt(5,10));
+			if (!bDebug) {
+				goNextPage(getRandomInt(5,10));
+			}
 		}
 	}
 	if (s.url.indexOf("/mascotcards/claim") > -1) {
-		if (debug) {
+		if (bDebug) {
 			console.log("claim detected, content:");
 			console.log(r.responseJSON.data.content);			
 		}
