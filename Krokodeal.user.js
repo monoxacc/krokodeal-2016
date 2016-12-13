@@ -7,7 +7,7 @@
 // @exclude     https://www.mydealz.de/xmas-game*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
 // @require     https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js
-// @version     2016.10
+// @version     2016.11
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -15,7 +15,6 @@
 //   \==========/
 
 var bDebug = false;
-var telegramToken = ""; // <YOUR TELEGRAM BOT TOKEN HERE>
 
 /*  ===========================
 		Functions
@@ -40,9 +39,15 @@ function handleTelegramNotifyChanged(e) {
 	var chkTelegramNotify = e.target;
 	if (chkTelegramNotify.checked) {
 		if(telegramToken == "") { //check telegramToken is set
-			alert("Please set your Telegram-Bot token!");
-			chkTelegramNotify.checked = false;
-			return 0;
+			var inputToken = prompt("Please set your Telegram-Bot token!");
+			if (inputToken == null) { //user aborted
+				chkTelegramNotify.checked = false;
+				return 0;
+			} else {
+				//TODO: test token api method getMe()
+				telegramToken = inputToken;
+				GM_setValue("telegramToken", telegramToken);
+			}
 		}
 		var code = getRandomString();
 		var inputNewChatId = prompt("Please set your chat_id here.\r\nIf you have no chat_id, leave the field blank and send the following code to your Telegram-Bot, AFTER SENDING press OK\r\n\r\n" + code, telegramChatId);
@@ -323,7 +328,7 @@ function initMessBox()
 		btnStats.value = "logs";
 		btnStats.onclick = saveStatsAsFile;
 		var btnClass = document.createAttribute("class");
-		btnClass.value = "btn btn--mode-highlight btn--mode-special";
+		btnClass.value = "text--backgroundPill";
 	btnStats.setAttributeNode(btnClass);
 	inputbox.appendChild(btnStats);
 	
@@ -335,9 +340,26 @@ function initMessBox()
 			if (confirm('Clear logs?')) GM_setValue("requeststats", "");
 		};
 		var btnClass = document.createAttribute("class");
-		btnClass.value = "btn btn--mode-highlight btn--mode-special";
+		btnClass.value = "text--backgroundPill";
 	btnClearStats.setAttributeNode(btnClass);
 	inputbox.appendChild(btnClearStats);
+	
+	var btnTelegramToken = document.createElement('input');
+		btnTelegramToken.id = "btnTelegramToken";
+		btnTelegramToken.type = "button";
+		btnTelegramToken.margin = "5px";
+		btnTelegramToken.value = "set TelegramToken";
+		btnTelegramToken.onclick = function() {
+			var inputToken = prompt("Please set your Telegram-Bot token!", telegramToken);
+			if (inputToken != null) { //user not aborted
+				telegramToken = inputToken;
+				GM_setValue("telegramToken", inputToken);
+			}
+		};
+		var btnClass = document.createAttribute("class");
+		btnClass.value = "text--backgroundPill";
+	btnTelegramToken.setAttributeNode(btnClass);
+	inputbox.appendChild(btnTelegramToken);
 	
 	box.appendChild(inputbox);
 	
@@ -413,6 +435,7 @@ var bAutoCatch = GM_getValue("bAutoCatch", true);
 var avgKrokoTime = parseInt(GM_getValue("avgKrokoTime", 3600000));
 var lastKrokoTime = parseInt(GM_getValue("lastKroko", 0));
 
+var telegramToken = GM_getValue("telegramToken","");
 var telegramChatId = GM_getValue("telegramChatId", "");
 var bTelegramNotify = GM_getValue("bTelegramNotify", telegramChatId != "");
 
@@ -447,8 +470,6 @@ $(document).ajaxComplete(function(e,r,s)
 			if(bAutoCatch === 'true') {
 				handleKroko();
 				if (!debug) goNextPage(getRandomInt(5,10));
-			} else {
-				
 			}
 		}
 		else
