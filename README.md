@@ -8,7 +8,7 @@ Krokodeal hunt script for Greasemonkey.
 ### First Steps
 
 1. Install Greasemonkey
-2. Navigate to raw Krokodeal.user.js in this Repo
+2. Navigate to [raw Krokodeal.user.js](https://github.com/monoxacc/krokodeal-2016/raw/master/Krokodeal.user.js) in this Repo
 3. Greasemonkey asks to install Script
 
 
