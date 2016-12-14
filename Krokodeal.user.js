@@ -1,4 +1,4 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name        Krokodeal-Jäger (by MoNoX)
 // @namespace   Krokodeal2016
 // @description Absahnen!
@@ -7,7 +7,7 @@
 // @exclude     https://www.mydealz.de/xmas-game*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
 // @require     https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js
-// @version     2016.13
+// @version     2016.14
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -16,10 +16,74 @@
 
 var bDebug = false;
 
+
+/*  ===========================
+		Style definitions
+	===========================  */
+
+var styleCSS = "@import url('https://fonts.googleapis.com/css?family=Heebo:100,400');\
+	#MessBox {\
+		background-color: #005293;\
+		bottom:0px;\
+		border-radius:6px;\
+		-webkit-box-shadow: 4px 4px 18px 0px rgba(97,97,97,1);\
+		-moz-box-shadow: 4px 4px 18px 0px rgba(97,97,97,1);\
+		box-shadow: 4px 4px 18px 0px rgba(97,97,97,1);\
+		color: #fff; \
+		font-family: 'Heebo', sans-serif; \
+		font-weight: 00;\
+		height:280px; \
+		margin-bottom:25px;\
+		margin-left:2px;\
+		overflow:auto;\
+		padding: 14px; \
+		position:fixed;\
+		width:290px; \
+	}\
+	#MessBox a {\
+		color: #69be28;\
+		font-weight: 400;\
+		margin-top: 4px;\
+		text-decoration: underline;\
+	}\
+	#MessBox p {\
+		margin: 10px 0;\
+		text-align: center;\
+	}\
+	#MessBox p.left-align {\
+		margin-top: 20px;\
+		text-align: left;\
+	}\
+	#MessBox .headline {\
+		font-size: 18px;\
+		font-weight: 400;\
+		margin: 18px 0; \
+	}\
+	#MessBox #InputBox {\
+		bottom:14px;\
+		position:absolute;\
+	}\
+	#MessBox #InputBox input {\
+		background-color: #69be28;\
+		border: none;\
+		border-radius: 4px;\
+		color: #000;\
+		cursor: pointer;\
+		font-weight: 400;\
+		padding: 2px 6px;\
+		margin: 0px 3px;\
+	}\
+	#MessBox #InputBox input:hover {\
+		background-color: #afd798;\
+	}";
+
+// set style
+GM_addStyle(styleCSS);
+
 /*  ===========================
 		Functions
 	===========================  */
-	
+
 function sendTelegramMessage(chat_id, msg) {
 	if((chat_id != null || chat_id != "")  && msg != null) {
 		$.ajax({
@@ -195,101 +259,118 @@ function initMessBox()
 {
 	var box = document.createElement('div');
 	box.id = "MessBox";
-	var boxstyle = document.createAttribute("style");
-	boxstyle.value = "width:250px;height:250px;position:fixed;bottom:0px;background-color:black;color:white;font-weight:bold;margin-bottom:25px;margin-left:2px;overflow:auto;"; //overflow:scroll;
-	//boxstyle.value += "background: url('https://www.mydealz.de/assets/img/mascotcards/deer/red_nose-level2.svg') no-repeat scroll 40% 90% / 50% auto #000;";
-	box.setAttributeNode(boxstyle);
 	
 	var script_version = GM_info.script.version;
-	box.innerHTML = "KrokoDEAL-Jäger " + script_version + "</br>";
-	box.innerHTML += "<span id='statusspan' style='color:yellow;'></span></br>";
-	box.innerHTML += "<span id='reloadspan' style='color:red;'></span></br>";
-	box.innerHTML += "<a href='https://www.mydealz.de/xmas-game/collection' target='_blank'>>> My Kroko-Collection <<</a></br>";
+	var headline = document.createElement("p");
+		headline.innerHTML = "KrokoDEAL-J&auml;ger " + script_version;
+		var headlineClass = document.createAttribute("class");
+		headlineClass.value = "headline";
+	headline.setAttributeNode(headlineClass);
+	box.appendChild(headline);
+
+	var infospans = document.createElement("p");
+		var spanStatus = document.createElement("span");
+		spanStatus.id = "statusspan";
+	infospans.appendChild(spanStatus);
+	infospans.appendChild(document.createElement("br"));
+		var spanReload = document.createElement("span");
+		spanReload.id = "reloadspan";
+	infospans.appendChild(spanReload);
+	box.appendChild(infospans);
+	
+	var collectionlinkP = document.createElement("p");
+		var colllink = document.createElement("a");
+			colllink.innerHTML = "&gt;&gt; My Kroko-Collection &lt;&lt;";
+			var colllinkHref = document.createAttribute("href");
+			colllinkHref.value = "https://www.mydealz.de/xmas-game/collection";
+			var colllinkTarget = document.createAttribute("target");
+			colllinkTarget.value = "_blank";
+		colllink.setAttributeNode(colllinkHref);
+		colllink.setAttributeNode(colllinkTarget);
+	collectionlinkP.appendChild(colllink);
+	box.appendChild(collectionlinkP);
+		
+	var checkboxes = document.createElement("p");
+		var checkboxesClass = document.createAttribute("class");
+			checkboxesClass.value = "left-align";
+	checkboxes.setAttributeNode(checkboxesClass);
+		//  Checkbox AutoCatch
+		var chkAutoCatch = document.createElement('input');
+			chkAutoCatch.id = "chkAutoCatch";
+			chkAutoCatch.type = "checkbox";
+			chkAutoCatch.checked = (bAutoCatch === 'true');
+			chkAutoCatch.onchange = function() {
+				bAutoCatch = chkAutoCatch.checked;
+				GM_setValue("bAutoCatch", chkAutoCatch.checked);
+			};
+		var chkAutoCatchLabel = document.createElement('label');
+			chkAutoCatchLabel.for = chkAutoCatch.id;
+			chkAutoCatchLabel.innerHTML = " Auto-Catching";
+	checkboxes.appendChild(chkAutoCatch);
+	checkboxes.appendChild(chkAutoCatchLabel);
+	checkboxes.appendChild(document.createElement('br'));
+		//  Checkbox Telegram-Notifier
+		var chkTelegramNotify = document.createElement('input');
+			chkTelegramNotify.id = "chkTelegramNotify";
+			chkTelegramNotify.type = "checkbox";
+			chkTelegramNotify.checked = (bTelegramNotify === 'true');
+			chkTelegramNotify.onchange = handleTelegramNotifyChanged;
+		var chkTelegramNotifyLabel = document.createElement('label');
+			chkTelegramNotifyLabel.id = "chkTelegramNotifyLabel";
+			chkTelegramNotifyLabel.for = chkTelegramNotify.id;
+			chkTelegramNotifyLabel.innerHTML = " Telegram-Notifier ["+telegramChatId+"]";
+	checkboxes.appendChild(chkTelegramNotify);
+	checkboxes.appendChild(chkTelegramNotifyLabel);
+	box.appendChild(checkboxes);
+
+	//Kroko ETA
 	if(lastKrokoTime) {
 		var d = new Date(lastKrokoTime);
-		box.innerHTML += "<span id='lastKroko'>Last Kroko: "+d.toLocaleTimeString()+"</span></br>";
+		var lastKroko = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 		d.setTime(d.getTime()+avgKrokoTime); // ETA calculation
-		box.innerHTML += "<span id='nextKroko'>Next Kroko: "+d.toLocaleTimeString()+" (ETA)</span></br>";
+		var nextKroko = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+		var etaSpans = document.createElement("p");
+			var spanLastKroko = document.createElement("span");
+				spanLastKroko.id = "lastKroko";
+				spanLastKroko.innerHTML = "Last Kroko: "+lastKroko+" (ETA: "+nextKroko+")";
+		etaSpans.appendChild(spanLastKroko);
+		box.appendChild(etaSpans);
 	}
-	
-	//  Checkbox AutoCatch
-	var chkAutoCatch = document.createElement('input');
-		chkAutoCatch.id = "chkAutoCatch";
-		chkAutoCatch.type = "checkbox";
-		chkAutoCatch.checked = (bAutoCatch === 'true');
-		chkAutoCatch.onchange = function() {
-			bAutoCatch = chkAutoCatch.checked;
-			GM_setValue("bAutoCatch", chkAutoCatch.checked);
-		};
-		var chkAutoCatchLabel = document.createElement('label');
-		chkAutoCatchLabel.for = chkAutoCatch.id;
-		chkAutoCatchLabel.innerHTML = " Auto-Catching";
-	box.appendChild(chkAutoCatch);
-	box.appendChild(chkAutoCatchLabel);
-		
-	box.appendChild(document.createElement('br'));
-		
-	//  Checkbox Telegram-Notifier
-	var chkTelegramNotify = document.createElement('input');
-		chkTelegramNotify.id = "chkTelegramNotify";
-		chkTelegramNotify.type = "checkbox";
-		chkTelegramNotify.checked = (bTelegramNotify === 'true');
-		chkTelegramNotify.onchange = handleTelegramNotifyChanged;
-		var chkTelegramNotifyLabel = document.createElement('label');
-		chkTelegramNotifyLabel.id = "chkTelegramNotifyLabel";
-		chkTelegramNotifyLabel.for = chkTelegramNotify.id;
-		chkTelegramNotifyLabel.innerHTML = " Telegram-Notifier ["+telegramChatId+"]";
-	box.appendChild(chkTelegramNotify);
-	box.appendChild(chkTelegramNotifyLabel);
-	
-	//KrokoKey Eingabe Box
+
+	// buttonbox
 	var inputbox = document.createElement('div');
-	inputbox.id = "InputBox";
-		var inputboxstyle = document.createAttribute("style");
-		inputboxstyle.value = "position:absolute;bottom:0px;";
-	inputbox.setAttributeNode(inputboxstyle);
-		
-	var btnStats = document.createElement('input');
-		btnStats.id = "btnStats";
-		btnStats.type = "button";
-		btnStats.value = "logs";
-		btnStats.onclick = function() {
-			saveStringAsFile(GM_getValue("requeststats", "no logs"));
-		};
-		var btnClass = document.createAttribute("class");
-		btnClass.value = "text--backgroundPill";
-	btnStats.setAttributeNode(btnClass);
+		inputbox.id = "InputBox";
+		// logs button
+		var btnStats = document.createElement('input');
+			btnStats.id = "btnStats";
+			btnStats.type = "button";
+			btnStats.value = "logs";
+			btnStats.onclick = function() {
+				saveStringAsFile(GM_getValue("requeststats", "no logs"));
+			};
 	inputbox.appendChild(btnStats);
-	
-	var btnClearStats = document.createElement('input');
-		btnClearStats.id = "btnClearStats";
-		btnClearStats.type = "button";
-		btnClearStats.value = "clear logs";
-		btnClearStats.onclick = function(){
-			if (confirm('Clear logs?')) GM_setValue("requeststats", "");
-		};
-		var btnClass = document.createAttribute("class");
-		btnClass.value = "text--backgroundPill";
-	btnClearStats.setAttributeNode(btnClass);
+		// clear logs button
+		var btnClearStats = document.createElement('input');
+			btnClearStats.id = "btnClearStats";
+			btnClearStats.type = "button";
+			btnClearStats.value = "clear logs";
+			btnClearStats.onclick = function(){
+				if (confirm('Clear logs?')) GM_setValue("requeststats", "");
+			};
 	inputbox.appendChild(btnClearStats);
-	
-	var btnTelegramToken = document.createElement('input');
-		btnTelegramToken.id = "btnTelegramToken";
-		btnTelegramToken.type = "button";
-		btnTelegramToken.margin = "5px";
-		btnTelegramToken.value = "set TelegramToken";
-		btnTelegramToken.onclick = function() {
-			var inputToken = prompt("Please set your Telegram-Bot token!", telegramToken);
-			if (inputToken != null) { //user not aborted
-				telegramToken = inputToken;
-				GM_setValue("telegramToken", inputToken);
-			}
-		};
-		var btnClass = document.createAttribute("class");
-		btnClass.value = "text--backgroundPill";
-	btnTelegramToken.setAttributeNode(btnClass);
+		// set TelegramToken button
+		var btnTelegramToken = document.createElement('input');
+			btnTelegramToken.id = "btnTelegramToken";
+			btnTelegramToken.type = "button";
+			btnTelegramToken.value = "set TelegramToken";
+			btnTelegramToken.onclick = function() {
+				var inputToken = prompt("Please set your Telegram-Bot token!", telegramToken);
+				if (inputToken != null) { //user not aborted
+					telegramToken = inputToken;
+					GM_setValue("telegramToken", inputToken);
+				}
+			};
 	inputbox.appendChild(btnTelegramToken);
-	
 	box.appendChild(inputbox);
 	
 	document.getElementsByTagName("body")[0].appendChild(box);
@@ -323,7 +404,7 @@ function handleKroko()
 	if(button != null)
 	{
 		setTimeout(function(){ button.click(); }, getRandomInt(2000, 3000));
-		setMessBoxSpanText("statusspan", "Kroko found & clicked!", "green");
+		setMessBoxSpanText("statusspan", "Kroko found & clicked!", "greenyellow");
 	} else { 
 		console.log("object 'div.link' not found!"); 
 	}
@@ -335,7 +416,7 @@ function goNextPage(sec)
 	var targetTime = (new Date()).getTime() + countdown;
 	clearInterval(idIntervalReloadspan);
 	idIntervalReloadspan = setInterval(function(){
-		setMessBoxSpanText("reloadspan", "next Page in..."+ getReloadTimeleft(targetTime) +"s", "red");
+		setMessBoxSpanText("reloadspan", "next Page in "+ getReloadTimeleft(targetTime) +" sec", "white");
 	},1000);
 	clearTimeout(idTimeoutNextPage);
 	idTimeoutNextPage = setTimeout(function(){
@@ -400,7 +481,7 @@ $(document).ajaxComplete(function(e,r,s)
 		{
 			addStats(createStatObj(getTimeStamp(),false, null));
 			
-			setMessBoxSpanText("statusspan", "There is something...maybe next page!!", "red");
+			setMessBoxSpanText("statusspan", "There is something...maybe next page!!", "orange");
 			if (!bDebug) {
 				goNextPage(getRandomInt(5,10));
 			}
@@ -418,7 +499,7 @@ $(document).ajaxComplete(function(e,r,s)
 	}
 });
 
-setMessBoxSpanText("statusspan", "Watch out for Kroko...", "yellow");
+setMessBoxSpanText("statusspan", "Watching out for Kroko...", "greenyellow");
 
 //Links zu Deals scrapen
 var links = $.map($('a[href]'), 
