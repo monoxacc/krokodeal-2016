@@ -7,7 +7,7 @@
 // @exclude     https://www.mydealz.de/xmas-game*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
 // @require     https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js
-// @version     2016.14
+// @version     2016.15
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -233,26 +233,25 @@ function getTimeStamp()
 	return d.getFullYear()*100000000+(d.getMonth()+1)*1000000+d.getDate()*10000+d.getHours()*100+d.getMinutes();
 }
 
-function getKrokoCatchedText(requestDataContentHTML) {
+// returns true, if a Kroko were catched and sets krokoCatchedText for telegram notification
+function detectKrokoCatched(requestDataContentHTML) {
 	var mydiv = document.createElement('div');
 	mydiv.innerHTML = requestDataContentHTML;
 	var crocModal = mydiv.getElementsByClassName("size--all-l")[0];
-	//var txtKrokokey = document.getElementById("txtKrokokey");
-	if(crocModal != null)
+	if (crocModal != null)
 	{
-		if(mydiv.getElementsByClassName("mc-notification-charcater--win")[0]!=null)
-		{
-			//Kroko catched!
-			//txtKrokokey.style.backgroundColor = "green";
+		krokoCatchedText = crocModal.textContent;
+		var catched = false;
+		try {
+			catched = mydiv.getElementsByClassName("mc-notification-character--win")[0] != null;
+		} catch(err) {
+			console.log("Couldn'd find ElementsByClassName: 'mc-notification-character--win'", mydiv.innerHTML);
 		}
-		else
-		{
-			//txtKrokokey.style.backgroundColor = "red";
-		}
-		return crocModal.textContent;
+		return catched;
 	} else {
-		console.log("error occured", mydiv.innerHTML);
+		console.log("Couldn'd find ElementsByClassName: 'size--all-l'", mydiv.innerHTML);
 	}
+	return false;
 }
 
 function initMessBox()
@@ -426,7 +425,7 @@ function goNextPage(sec)
 
 function getReloadTimeleft(targetTime)
 {
-	return ( (targetTime - (new Date()).getTime() ) / 1000 ).toFixed(1);
+	return ( ( targetTime - new Date().getTime() ) / 1000 ).toFixed(1);
 }
 
 /*  ===========================
@@ -434,17 +433,36 @@ function getReloadTimeleft(targetTime)
 	===========================  */
 
 // get saved configs
-var bAutoCatch = GM_getValue("bAutoCatch", true);
-var avgKrokoTime = parseInt(GM_getValue("avgKrokoTime", 3600000));
+var bAutoCatch = GM_getValue("bAutoCatch", "true");
+var avgKrokoTime = parseInt(GM_getValue("avgKrokoTime", 60 * 60 * 1000)); //default = 1h in ms
 var lastKrokoTime = parseInt(GM_getValue("lastKroko", 0));
 
 var telegramToken = GM_getValue("telegramToken","");
 var telegramChatId = GM_getValue("telegramChatId", "");
-var bTelegramNotify = GM_getValue("bTelegramNotify", telegramChatId != "");
+var bTelegramNotify = GM_getValue("bTelegramNotify", (telegramChatId != "").toString());
+
+var krokoCounter = parseInt(GM_getValue("krokoCounter",0));
+var krokoCounterLimit = 15; // max:20 (collect >20 krokos one behind the other = ban)
+var krokoCounterLimitReached = krokoCounter >= krokoCounterLimit;
+
+var krokoCatchedText = "";
 
 // Timer IDs
 var idIntervalReloadspan = 0;
 var idTimeoutNextPage = 0;
+
+// Debug output
+if (bDebug) {
+	console.log("bAutoCatch:",bAutoCatch);
+	console.log("avgKrokoTime:",avgKrokoTime);
+	console.log("lastKrokoTime:",lastKrokoTime);
+	console.log("telegramToken:",telegramToken);
+	console.log("telegramChatId:",telegramChatId);
+	console.log("bTelegramNotify:",bTelegramNotify);
+	console.log("krokoCounter:",krokoCounter);
+	console.log("krokoCounterLimit:",krokoCounterLimit);
+	console.log("krokoCounterLimitReached:",krokoCounterLimitReached);
+}
 
 initMessBox();
 
@@ -456,19 +474,17 @@ $(document).ajaxComplete(function(e,r,s)
 		console.log(r);
 		console.log(s);
 	}
-	if (s.url.indexOf("/mascotcards/see") > -1)
-	{
+	if (s.url.indexOf("/mascotcards/see") > -1)	{ // Kroko is nearby
 		var regEx = new RegExp("(mascotcards-[0-9a-z]+)");
 		var match = r.responseText.match(regEx);
 		if (match)
 		{
 			var catchKey = match[1];
 			addStats(createStatObj(getTimeStamp(),true, catchKey));
-			
+
 			// avgTime calc & save lastKroko-Timestamp
 			setKrokoTimeStats();
-			
-			//document.getElementById("txtKrokokey").value = catchKey;
+
 			titleBlinking();
 			if(bAutoCatch === 'true') {
 				handleKroko();
@@ -476,9 +492,7 @@ $(document).ajaxComplete(function(e,r,s)
 					goNextPage(getRandomInt(5,10));
 				}
 			}
-		}
-		else
-		{
+		} else {
 			addStats(createStatObj(getTimeStamp(),false, null));
 			
 			setMessBoxSpanText("statusspan", "There is something...maybe next page!!", "orange");
@@ -487,17 +501,50 @@ $(document).ajaxComplete(function(e,r,s)
 			}
 		}
 	}
-	if (s.url.indexOf("/mascotcards/claim") > -1) {
+	if (s.url.indexOf("/mascotcards/claim") > -1) { // Kroko were clicked (response contains catched or not-catched info)
 		if (bDebug) {
 			console.log("claim detected, content:");
-			console.log(r.responseJSON.data.content);			
+			console.log(r.responseJSON.data.content);
 		}
+
+		// detect, that Kroko were catched & scrap text for telegram notify
+		var bCatched = detectKrokoCatched(r.responseJSON.data.content);
+		if (bCatched) {
+			krokoCounter = krokoCounter + 1;
+			GM_setValue("krokoCounter", krokoCounter + 1);
+		}
+		
 		if (bTelegramNotify === 'true') {
-			var msg = getKrokoCatchedText(r.responseJSON.data.content);
-			sendTelegramMessage(telegramChatId, getUsername() + ": " + msg);
+			sendTelegramMessage(telegramChatId, getUsername() + ": " + krokoCatchedText);
 		}
 	}
 });
+
+// check krokoCounter-Limit to prevent ban
+if (krokoCounterLimitReached) {
+	//wait 2h to prevent ban
+	var currDateStamp = new Date().getTime();
+	var twoHours = 2 * 60 * 60 * 1000; // 2h in ms
+	var lastKrokoDate = new Date(lastKrokoTime);
+	var waitUntilDate = new Date(lastKrokoDate.getTime() + twoHours);
+	if (currDateStamp > waitUntilDate.getTime()) { // time already waited, reset counter
+		krokoCounter = 0;
+		GM_setValue("krokoCounter", 0);
+		krokoCounterLimitReached = false;
+	} else { // wait time to prevent ban
+		setMessBoxSpanText("statusspan", "Wait 2h to prevent ban.", "red");
+		setMessBoxSpanText("lastKroko", "Please don't click any Kroko until "+waitUntilDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})+"!", "red");
+		setInterval(function(){
+			setMessBoxSpanText("reloadspan", "next Page in "+ getReloadTimeleft(waitUntilDate.getTime()) +" sec", "white");
+		},1000);
+		setTimeout(function(){
+			GM_setValue("krokoCounter", krokoCounter + 1);
+			window.location.reload(true);
+			//window.location.href = nextPage;
+		}, waitUntilDate.getTime() - currDateStamp);
+		return;
+	}
+}
 
 setMessBoxSpanText("statusspan", "Watching out for Kroko...", "greenyellow");
 
