@@ -190,7 +190,7 @@ function setMessBoxSpanText(span,text,color)
 	MessBoxSpan.innerHTML = text;
 }
 
-function setKrokoTimeStats() {
+function setLastKrokoClickedAndETA() {
 	var d = new Date();
 	var oldLastKrokoTime = lastKrokoClickedTime;
 	if(oldLastKrokoTime) {
@@ -209,15 +209,10 @@ function setKrokoTimeStats() {
 	GM_setValue("lastKrokoClicked", d.getTime());
 }
 
-function addStats(statsObj)
+function addLog(text)
 {
-	var savedStats = GM_getValue("requeststats", null);
-	GM_setValue("requeststats", (savedStats == null ? JSON.stringify(statsObj) : savedStats + JSON.stringify(statsObj))+"\r\n");
-}
-
-function createStatObj(intDate,bCatchable,sCatchKey)
-{
-	return {date:intDate,catchable:bCatchable,key:sCatchKey};
+	var savedLogs = GM_getValue("requeststats", null);
+	GM_setValue("requeststats", savedLogs + text +"\r\n");
 }
 
 function saveStringAsFile(text)
@@ -479,9 +474,9 @@ $(document).ajaxComplete(function(e,r,s)
 		var match = r.responseText.match(regEx);
 		if (match) { // Kroko appeared
 			var catchKey = match[1];
-			addStats(createStatObj(getTimeStamp(),true, catchKey));
 
 			if (!krokoCounterLimitReached) {
+				addLog(getTimeStamp() +": Kroko appeared ["+ catchKey +"] trying to catch..");
 				titleBlinking();
 				if(bAutoCatch === 'true') {
 					handleKroko();
@@ -489,9 +484,11 @@ $(document).ajaxComplete(function(e,r,s)
 						goNextPage(getRandomInt(5,10));
 					}
 				}
+			} else {
+				addLog(getTimeStamp() +": Kroko ignored to prevent ban");
 			}
 		} else { // no Kroko appeared
-			addStats(createStatObj(getTimeStamp(),false, null));
+			addLog(getTimeStamp() +": Kroko nearby..");
 			
 			if (!krokoCounterLimitReached) {
 				setMessBoxSpanText("statusspan", "There is something...maybe next page!!", "orange");
@@ -510,11 +507,14 @@ $(document).ajaxComplete(function(e,r,s)
 		// detect, that Kroko were catched & scrap text for telegram notify
 		var bCatched = detectKrokoCatched(r.responseJSON.data.content);
 		if (bCatched) {
-			setKrokoTimeStats(); // avgTime calc & save lastKrokoClicked-Timestamp
+			addLog(getTimeStamp() +": Kroko catched! ["+krokoCounter+"/"+krokoCounterLimit+"]");
+			setLastKrokoClickedAndETA(); // avgTime calc & save lastKrokoClicked-Timestamp
 			krokoCounter = krokoCounter + 1;
-			GM_setValue("krokoCounter", krokoCounter + 1);
+			GM_setValue("krokoCounter", krokoCounter);
+		} else {
+			addLog(getTimeStamp() +": Kroko NOT catched! ["+krokoCounter+"/"+krokoCounterLimit+"] krokoCatchedText: "+krokoCatchedText);
 		}
-		
+
 		if (bTelegramNotify === 'true') {
 			sendTelegramMessage(telegramChatId, getUsername() + ": " + krokoCatchedText);
 		}
