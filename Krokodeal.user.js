@@ -192,7 +192,7 @@ function setMessBoxSpanText(span,text,color)
 
 function setKrokoTimeStats() {
 	var d = new Date();
-	var oldLastKrokoTime = lastKrokoTime;
+	var oldLastKrokoTime = lastKrokoClickedTime;
 	if(oldLastKrokoTime) {
 		var oldAvgKrokoTime = avgKrokoTime;
 		avgKrokoTime = d.getTime() - oldLastKrokoTime;
@@ -205,8 +205,8 @@ function setKrokoTimeStats() {
 		}
 		GM_setValue("avgKrokoTime", avgKrokoTime);
 	}
-	lastKrokoTime = d.getTime();
-	GM_setValue("lastKroko", d.getTime());
+	lastKrokoClickedTime = d.getTime();
+	GM_setValue("lastKrokoClicked", d.getTime());
 }
 
 function addStats(statsObj)
@@ -323,8 +323,8 @@ function initMessBox()
 	box.appendChild(checkboxes);
 
 	//Kroko ETA
-	if(lastKrokoTime) {
-		var d = new Date(lastKrokoTime);
+	if(lastKrokoClickedTime) {
+		var d = new Date(lastKrokoClickedTime);
 		var lastKroko = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 		d.setTime(d.getTime()+avgKrokoTime); // ETA calculation
 		var nextKroko = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
@@ -435,7 +435,7 @@ function getReloadTimeleft(targetTime)
 // get saved configs
 var bAutoCatch = GM_getValue("bAutoCatch", "true");
 var avgKrokoTime = parseInt(GM_getValue("avgKrokoTime", 60 * 60 * 1000)); //default = 1h in ms
-var lastKrokoTime = parseInt(GM_getValue("lastKroko", 0));
+var lastKrokoClickedTime = parseInt(GM_getValue("lastKrokoClicked", 0));
 
 var telegramToken = GM_getValue("telegramToken","");
 var telegramChatId = GM_getValue("telegramChatId", "");
@@ -455,7 +455,7 @@ var idTimeoutNextPage = 0;
 if (bDebug) {
 	console.log("bAutoCatch:",bAutoCatch);
 	console.log("avgKrokoTime:",avgKrokoTime);
-	console.log("lastKrokoTime:",lastKrokoTime);
+	console.log("lastKrokoClickedTime:",lastKrokoClickedTime);
 	console.log("telegramToken:",telegramToken);
 	console.log("telegramChatId:",telegramChatId);
 	console.log("bTelegramNotify:",bTelegramNotify);
@@ -474,30 +474,30 @@ $(document).ajaxComplete(function(e,r,s)
 		console.log(r);
 		console.log(s);
 	}
-	if (s.url.indexOf("/mascotcards/see") > -1)	{ // Kroko is nearby
+	if (s.url.indexOf("/mascotcards/see") > -1) { // Kroko is nearby
 		var regEx = new RegExp("(mascotcards-[0-9a-z]+)");
 		var match = r.responseText.match(regEx);
-		if (match)
-		{
+		if (match) { // Kroko appeared
 			var catchKey = match[1];
 			addStats(createStatObj(getTimeStamp(),true, catchKey));
 
-			// avgTime calc & save lastKroko-Timestamp
-			setKrokoTimeStats();
-
-			titleBlinking();
-			if(bAutoCatch === 'true') {
-				handleKroko();
+			if (!krokoCounterLimitReached) {
+				titleBlinking();
+				if(bAutoCatch === 'true') {
+					handleKroko();
+					if (!bDebug) {
+						goNextPage(getRandomInt(5,10));
+					}
+				}
+			}
+		} else { // no Kroko appeared
+			addStats(createStatObj(getTimeStamp(),false, null));
+			
+			if (!krokoCounterLimitReached) {
+				setMessBoxSpanText("statusspan", "There is something...maybe next page!!", "orange");
 				if (!bDebug) {
 					goNextPage(getRandomInt(5,10));
 				}
-			}
-		} else {
-			addStats(createStatObj(getTimeStamp(),false, null));
-			
-			setMessBoxSpanText("statusspan", "There is something...maybe next page!!", "orange");
-			if (!bDebug) {
-				goNextPage(getRandomInt(5,10));
 			}
 		}
 	}
@@ -510,6 +510,7 @@ $(document).ajaxComplete(function(e,r,s)
 		// detect, that Kroko were catched & scrap text for telegram notify
 		var bCatched = detectKrokoCatched(r.responseJSON.data.content);
 		if (bCatched) {
+			setKrokoTimeStats(); // avgTime calc & save lastKrokoClicked-Timestamp
 			krokoCounter = krokoCounter + 1;
 			GM_setValue("krokoCounter", krokoCounter + 1);
 		}
@@ -525,7 +526,7 @@ if (krokoCounterLimitReached) {
 	//wait 2h to prevent ban
 	var currDateStamp = new Date().getTime();
 	var twoHours = 2 * 60 * 60 * 1000; // 2h in ms
-	var lastKrokoDate = new Date(lastKrokoTime);
+	var lastKrokoDate = new Date(lastKrokoClickedTime);
 	var waitUntilDate = new Date(lastKrokoDate.getTime() + twoHours);
 	if (currDateStamp > waitUntilDate.getTime()) { // time already waited, reset counter
 		krokoCounter = 0;
@@ -542,7 +543,7 @@ if (krokoCounterLimitReached) {
 			window.location.reload(true);
 			//window.location.href = nextPage;
 		}, waitUntilDate.getTime() - currDateStamp);
-		return;
+		return; // end this script here until wait-time is over
 	}
 }
 
