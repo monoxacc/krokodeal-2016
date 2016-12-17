@@ -7,7 +7,7 @@
 // @exclude     https://www.mydealz.de/xmas-game*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
 // @require     https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js
-// @version     2016.15
+// @version     2016.16
 // @grant       none
 // ==/UserScript==
 //   /==========\
