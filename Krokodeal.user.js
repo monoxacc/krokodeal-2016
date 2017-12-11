@@ -1,6 +1,7 @@
 ﻿// ==UserScript==
 // @name        Krokodeal-Jäger (by MoNoX)
 // @namespace   Krokodeal2016
+// @author	MoNoX
 // @description Absahnen!
 // @downloadURL https://github.com/monoxacc/krokodeal-2016/raw/master/Krokodeal.user.js
 // @include     https://www.mydealz.de/*
