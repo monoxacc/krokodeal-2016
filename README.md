@@ -3,7 +3,10 @@ Krokodeal hunt script for Greasemonkey.
 
 #### This is an experimental script for educational purposes only.
 
-- tested on Firefox only
+- tested on Chrome 63
+
+![alt sample picture](https://i.imgur.com/5JZvL9y.png)
+
 
 ### First Steps
 
