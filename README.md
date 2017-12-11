@@ -6,7 +6,7 @@ Krokodeal hunt script for Tampermonkey.
 
 - tested on Chrome v63
 
-![alt sample picture](https://i.imgur.com/5JZvL9y.png)
+![alt sample picture](pic.png)
 
 
 ### First Steps
