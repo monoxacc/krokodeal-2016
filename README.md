@@ -1,5 +1,5 @@
 # krokodeal-2016
-Krokodeal hunt script for Greasemonkey.
+Krokodeal hunt script for Tampermonkey.
 
 #### This is an experimental script for educational purposes only.
 
@@ -10,10 +10,10 @@ Krokodeal hunt script for Greasemonkey.
 
 ### First Steps
 
-1. Install Greasemonkey
+1. Install [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
 2. Navigate to [raw Krokodeal.user.js](https://github.com/monoxacc/krokodeal-2016/raw/master/Krokodeal.user.js) in this Repo
-3. Greasemonkey asks to install Script
-
+3. Tampermonkey asks to install Script
+4. Navigate to Kroko-Event
 
 
 *Thanks to the following persons for distribute their software for free:*
