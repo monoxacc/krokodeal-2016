@@ -87,6 +87,7 @@ GM_addStyle(styleCSS);
 
 function sendTelegramMessage(chat_id, msg) {
 	if((chat_id != null || chat_id != "")  && msg != null) {
+		addLog(getTimeStamp() + "try to sendTelegramMessage() params: chat_id="+chat_id+" msg="+msg);
 		$.ajax({
 			'type': 'POST',
 			'url': 'https://api.telegram.org/bot'+ telegramToken +'/sendMessage',
@@ -96,7 +97,7 @@ function sendTelegramMessage(chat_id, msg) {
 			'success': function() { }
 		});
 	} else {
-		console.log("sendTelegramMessage() bad call!");
+		addLog(getTimeStamp() + "ERROR: sendTelegramMessage() bad params: chat_id="+chat_id+" msg="+msg);
 	}
 }
 
