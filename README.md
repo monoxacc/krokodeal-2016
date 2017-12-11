@@ -16,7 +16,7 @@ Krokodeal hunt script for Tampermonkey.
 4. Navigate to Kroko-Event
 
 
-*Thanks to the following persons for distribute their software for free:*
+*Thanks to the following persons for distributing their software for free:*
 - <sub>Eli Grey
   - <sub>[FileSaver.js](https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js)
 - <sub>Anthony Lieuallen
