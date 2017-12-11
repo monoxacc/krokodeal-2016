@@ -1,7 +1,7 @@
 # krokodeal-2016
 Krokodeal hunt script for Greasemonkey.
 
-#### This is an experimental script for testing purposes.
+#### This is an experimental script for educational purposes only.
 
 - tested on Firefox only
 
