@@ -87,7 +87,7 @@ GM_addStyle(styleCSS);
 
 function sendTelegramMessage(chat_id, msg) {
 	if((chat_id != null || chat_id != "")  && msg != null) {
-		addLog(getTimeStamp() + "try to sendTelegramMessage() params: chat_id="+chat_id+" msg="+msg);
+		console.log(getTimeStamp() + "try to sendTelegramMessage() params: chat_id="+chat_id+" msg="+msg);
 		$.ajax({
 			'type': 'POST',
 			'url': 'https://api.telegram.org/bot'+ telegramToken +'/sendMessage',
@@ -97,7 +97,7 @@ function sendTelegramMessage(chat_id, msg) {
 			'success': function() { }
 		});
 	} else {
-		addLog(getTimeStamp() + "ERROR: sendTelegramMessage() bad params: chat_id="+chat_id+" msg="+msg);
+		console.log(getTimeStamp() + "ERROR: sendTelegramMessage() bad params: chat_id="+chat_id+" msg="+msg);
 	}
 }
 
@@ -163,7 +163,7 @@ function handleTelegramNotifyChanged(e) {
 
 function getUsername() {
 	try {
-		return document.getElementById('user-profile-dropdown').getElementsByClassName('navDropDown-head-text')[0].innerText;
+		return document.getElementById('user-profile-dropdown').getElementsByClassName('navDropDown-head-text')[0].innerText.trim();
 	} catch(err) {
 	}
 	return '';
