@@ -23,6 +23,9 @@ Krokodeal hunt script for Tampermonkey.
 3. Check the Telegram-Notify option and send captcha to your telegram bot
 4. Get notified!
 
+### Hints
+
+- To prevent that the bot will stuck (e.g. caused by internet connection errors like timeout/server unreachable) you can use [AutoRefresh](https://chrome.google.com/webstore/detail/auto-refresh/ifooldnmmcmlbdennkpdnlnbgbmfalko) with 30 or 45min configured.
 
 *Thanks to the following persons for distributing their software for free:*
 - <sub>Eli Grey
