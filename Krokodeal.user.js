@@ -6,6 +6,7 @@
 // @downloadURL https://github.com/monoxacc/krokodeal-2016/raw/master/Krokodeal.user.js
 // @include     https://www.mydealz.de/*
 // @exclude     https://www.mydealz.de/xmas-game*
+// @exclude     https://www.mydealz.de/pepper-festival
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
 // @require     https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js
 // @version     2017.002
