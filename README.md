@@ -28,7 +28,5 @@ Krokodeal hunt script for Tampermonkey.
 - To prevent that the bot will stuck (e.g. caused by internet connection errors like timeout/server unreachable) you can use [AutoRefresh](https://chrome.google.com/webstore/detail/auto-refresh/ifooldnmmcmlbdennkpdnlnbgbmfalko) with 30 or 45min configured.
 
 *Thanks to the following persons for distributing their software for free:*
-- <sub>Eli Grey
-  - <sub>[FileSaver.js](https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js)
 - <sub>Anthony Lieuallen
   - <sub>[grant-none-shim.js](https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js)
