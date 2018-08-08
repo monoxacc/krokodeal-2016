@@ -9,7 +9,7 @@
 // @exclude     https://www.mydealz.de/pepper-festival*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
 // @require     https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js
-// @version     2017.002
+// @version     2018.001
 // @grant       none
 // ==/UserScript==
 //   /==========\
