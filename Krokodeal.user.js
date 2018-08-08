@@ -1,4 +1,4 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name        Krokodeal-Jäger (by MoNoX)
 // @namespace   Krokodeal2016
 // @author	MoNoX
@@ -8,8 +8,7 @@
 // @exclude     https://www.mydealz.de/xmas-game*
 // @exclude     https://www.mydealz.de/pepper-festival*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
-// @require     https://raw.githubusercontent.com/eligrey/FileSaver.js/c3e4a45021f205a790a2699f4af7a5b85fb63e09/FileSaver.min.js
-// @version     2018.002
+// @version     2018.003
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -218,11 +217,21 @@ function addLog(text)
 	GM_setValue("requeststats", savedLogs + text +"\r\n");
 }
 
+function PopUp(content, name){
+    var ScreenWidth=window.screen.width;
+    var ScreenHeight=window.screen.height;
+    var movefromedge=0;
+    placementx=(ScreenWidth/2)-((400)/2);
+    placementy=(ScreenHeight/2)-((300+50)/2);
+    WinPop=window.open("About:Blank",name,"width=400,height=300,toolbar=0,location=0,directories=0,status=0,scrollbars=0,menubar=0,resizable=0,left="+placementx+",top="+placementy+",scre enX="+placementx+",screenY="+placementy+",");
+    WinPop.document.write('<html>\n<head>\n</head>\n<body><span style="white-space: pre-line">'+content+'</span></body></html>');
+}
+
 function saveStringAsFile(text)
 {
-	var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+	//var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
 	var filename = getTimeStamp()+"_requestlog.txt"
-	saveAs(blob, filename);
+	PopUp(text, filename)
 }
 
 function getTimeStamp()
