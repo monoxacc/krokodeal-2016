@@ -560,7 +560,7 @@ if (krokoCounterLimitReached) {
 	}
 }
 
-setMessBoxSpanText("statusspan", "Watching out for Kroko...", "greenyellow");
+setMessBoxSpanText("statusspan", "Watch out for Kroko...", "greenyellow");
 
 //Links zu Deals scrapen
 var links = $.map($('a[href]'), 
