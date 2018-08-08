@@ -1,20 +1,20 @@
 # krokodeal-2016
 Krokodeal hunt script for Tampermonkey.
-*Also works for 2017 !*
+*Also works for ~~2017~~ 2018 !*
 
 #### This is an experimental script for educational purposes only.
 
-- tested on Chrome v63
+- tested on Chrome v68
 
 ![alt sample picture](pic.png)
-
 
 ### First Steps
 
 1. Install [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
-2. Navigate to [raw Krokodeal.user.js](https://github.com/monoxacc/krokodeal-2016/raw/master/Krokodeal.user.js) in this Repo
-3. Tampermonkey asks to install Script
+2. Click the link to [raw Krokodeal.user.js](https://github.com/monoxacc/krokodeal-2016/raw/master/Krokodeal.user.js)
+3. Tampermonkey asks to install script
 4. Navigate to a deal page
+5. Chill and wait
 
 ### Telegram Notifier
 
