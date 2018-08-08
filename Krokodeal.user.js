@@ -6,7 +6,7 @@
 // @downloadURL https://github.com/monoxacc/krokodeal-2016/raw/master/Krokodeal.user.js
 // @include     https://www.mydealz.de/*
 // @exclude     https://www.mydealz.de/xmas-game*
-// @exclude     https://www.mydealz.de/pepper-festival
+// @exclude     https://www.mydealz.de/pepper-festival*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
 // @require     https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js
 // @version     2017.002
@@ -279,7 +279,8 @@ function initMessBox()
 		var colllink = document.createElement("a");
 			colllink.innerHTML = "&gt;&gt; My Kroko-Collection &lt;&lt;";
 			var colllinkHref = document.createAttribute("href");
-			colllinkHref.value = "https://www.mydealz.de/xmas-game/collection";
+			//colllinkHref.value = "https://www.mydealz.de/xmas-game/collection";
+			colllinkHref.value = "https://www.mydealz.de/pepper-festival";
 			var colllinkTarget = document.createAttribute("target");
 			colllinkTarget.value = "_blank";
 		colllink.setAttributeNode(colllinkHref);
