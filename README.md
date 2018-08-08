@@ -14,7 +14,7 @@ Krokodeal hunt script for Tampermonkey.
 2. Click the link to [raw Krokodeal.user.js](https://github.com/monoxacc/krokodeal-2016/raw/master/Krokodeal.user.js)
 3. Tampermonkey asks to install script
 4. Navigate to a deal page
-5. Chill and wait
+5. Chill and wait - one tab is enough, there is no benefit by using more than one browser tab
 
 ### Telegram Notifier
 
