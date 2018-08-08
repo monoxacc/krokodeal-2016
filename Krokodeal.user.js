@@ -8,7 +8,7 @@
 // @exclude     https://www.mydealz.de/xmas-game*
 // @exclude     https://www.mydealz.de/pepper-festival*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
-// @require     https://raw.githubusercontent.com/eligrey/FileSaver.js/master/src/FileSaver.js
+// @require     https://raw.githubusercontent.com/eligrey/FileSaver.js/c3e4a45021f205a790a2699f4af7a5b85fb63e09/FileSaver.min.js
 // @version     2018.002
 // @grant       none
 // ==/UserScript==
