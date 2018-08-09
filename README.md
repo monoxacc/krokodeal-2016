@@ -8,6 +8,15 @@ Krokodeal hunt script for Tampermonkey.
 
 ![alt sample picture](pic.png)
 
+### Features
+
+- automatically browsing
+- auto-click Kroko, if appeared
+- randomized browse and click -time behaviour
+- get notificated by a catch with the Telegram messenger
+- ban prevention - this will take a 2h break after a collection of 15 Krokos (the real deadline is possibly the continuous collection of 20 Krokos)
+- possibly ETA calculation for next Kroko
+
 ### First Steps
 
 1. Install [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo)
@@ -20,7 +29,7 @@ Krokodeal hunt script for Tampermonkey.
 
 1. Create a telegram bot at [BotFather](https://telegram.me/BotFather)
 2. Set Telegram token
-3. Check the Telegram-Notify option and send captcha to your telegram bot
+3. Check the Telegram-Notify option and send the captcha to your telegram bot
 4. Get notified!
 
 ### Hints
