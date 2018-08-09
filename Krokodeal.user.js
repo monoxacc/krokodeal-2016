@@ -40,6 +40,7 @@ var styleCSS = "@import url('https://fonts.googleapis.com/css?family=Heebo:100,4
 		padding: 14px; \
 		position:fixed;\
 		width:290px; \
+		z-index:10 \
 	}\
 	#MessBox a {\
 		color: #69be28;\
