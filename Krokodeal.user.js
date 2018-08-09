@@ -8,7 +8,7 @@
 // @exclude     https://www.mydealz.de/xmas-game*
 // @exclude     https://www.mydealz.de/pepper-festival*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
-// @version     2018.003
+// @version     2018.004
 // @grant       none
 // ==/UserScript==
 //   /==========\
