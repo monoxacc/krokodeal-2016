@@ -8,7 +8,7 @@
 // @exclude     https://www.mydealz.de/xmas-game*
 // @exclude     https://www.mydealz.de/pepper-festival*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
-// @version     2018.004
+// @version     2018.005
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -40,7 +40,7 @@ var styleCSS = "@import url('https://fonts.googleapis.com/css?family=Heebo:100,4
 		padding: 14px; \
 		position:fixed;\
 		width:290px; \
-		z-index:10 \
+		z-index:10; \
 	}\
 	#MessBox a {\
 		color: #69be28;\
@@ -158,8 +158,22 @@ function handleTelegramNotifyChanged(e) {
 			chkTelegramNotify.checked = false;
 		}
 	}
-	bTelegramNotify = chkTelegramNotify.checked;			
+	bTelegramNotify = chkTelegramNotify.checked;
 	GM_setValue("bTelegramNotify", chkTelegramNotify.checked);
+}
+
+function handleTabLockChanged(e) {
+    var chkTabLock = e.target;
+    if (chkTabLock.checked) {
+        var tabLockId = getRandomString();
+        window.name = tabLockId;
+        GM_setValue("TabLockID", tabLockId);
+        window.location.reload(true);
+    } else {
+        window.name = "";
+        GM_deleteValue("TabLockID");
+        window.location.reload(true);
+    }
 }
 
 function getUsername() {
@@ -290,7 +304,7 @@ function initMessBox()
 			colllink.innerHTML = "&gt;&gt; My Kroko-Collection &lt;&lt;";
 			var colllinkHref = document.createAttribute("href");
 			//colllinkHref.value = "https://www.mydealz.de/xmas-game/collection";
-			colllinkHref.value = "https://www.mydealz.de/pepper-festival/collection";
+			colllinkHref.value = "https://www.mydealz.de/pepper-festival";
 			var colllinkTarget = document.createAttribute("target");
 			colllinkTarget.value = "_blank";
 		colllink.setAttributeNode(colllinkHref);
@@ -302,6 +316,19 @@ function initMessBox()
 		var checkboxesClass = document.createAttribute("class");
 			checkboxesClass.value = "left-align";
 	checkboxes.setAttributeNode(checkboxesClass);
+        //  Checkbox Tab-Lock
+		var chkTabLock = document.createElement('input');
+			chkTabLock.id = "chkTabLock";
+			chkTabLock.type = "checkbox";
+			chkTabLock.checked = (bTabLock === 'true');
+			chkTabLock.onchange = handleTabLockChanged;
+		var chkTabLockLabel = document.createElement('label');
+			chkTabLockLabel.id = "chkTabLockLabel";
+			chkTabLockLabel.for = chkTabLock.id;
+			chkTabLockLabel.innerHTML = " Tab-Lock";
+	checkboxes.appendChild(chkTabLock);
+	checkboxes.appendChild(chkTabLockLabel);
+	checkboxes.appendChild(document.createElement('br'));
 		//  Checkbox AutoCatch
 		var chkAutoCatch = document.createElement('input');
 			chkAutoCatch.id = "chkAutoCatch";
@@ -442,6 +469,9 @@ function getReloadTimeleft(targetTime)
 	===========================  */
 
 // get saved configs
+var tabLockId = GM_getValue("TabLockID", "");
+var bTabLock = (tabLockId != "").toString();
+
 var bAutoCatch = GM_getValue("bAutoCatch", "true");
 var avgKrokoTime = parseInt(GM_getValue("avgKrokoTime", 60 * 60 * 1000)); //default = 1h in ms
 var lastKrokoClickedTime = parseInt(GM_getValue("lastKrokoClicked", 0));
@@ -474,6 +504,14 @@ if (bDebug) {
 }
 
 initMessBox();
+
+// if tablock is on, this bot will work on a specific tab only
+if (bTabLock === 'true') {
+    if (window.name != tabLockId) { // if this is not the correct tab
+        setMessBoxSpanText("statusspan", "[TabLock] Bot deactivated on this Tab", "white");
+        return; // end this script here
+    }
+}
 
 $(document).ajaxComplete(function(e,r,s)
 {
