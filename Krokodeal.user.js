@@ -164,7 +164,7 @@ function handleTelegramNotifyChanged(e) {
 
 function getUsername() {
 	try {
-		return document.getElementById('user-profile-dropdown').getElementsByClassName('navDropDown-head-text')[0].innerText.trim();
+		return document.getElementById('user-profile-dropdown').getElementsByClassName('navDropDown-head')[0].innerText.trim();
 	} catch(err) {
 	}
 	return '';
