@@ -508,7 +508,7 @@ initMessBox();
 // if tablock is on, this bot will work on a specific tab only
 if (bTabLock === 'true') {
     if (window.name != tabLockId) { // if this is not the correct tab
-        setMessBoxSpanText("statusspan", "[TabLock] Bot deactivated on this Tab", "white");
+        setMessBoxSpanText("statusspan", "[TabLock] Bot deactivated on this Tab", "orange");
         return; // end this script here
     }
 }
