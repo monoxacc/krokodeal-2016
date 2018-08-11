@@ -8,7 +8,7 @@
 // @exclude     https://www.mydealz.de/xmas-game*
 // @exclude     https://www.mydealz.de/pepper-festival*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
-// @version     2018.005
+// @version     2018.006
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -141,7 +141,7 @@ function handleTelegramNotifyChanged(e) {
 					}
 				});
 			} else {
-				if (/^[1-9]\d*$/.test(inputNewChatId)) { // is valid number (exclude 0)
+				if (/^-?[1-9]\d*$/.test(inputNewChatId)) { // is valid number (exclude 0)
 					if (inputNewChatId != telegramChatId) { //chat_id were changed
 						var old = telegramChatId;
 						telegramChatId = inputNewChatId;
