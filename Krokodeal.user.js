@@ -146,7 +146,7 @@ function handleTelegramNotifyChanged(e) {
 						var old = telegramChatId;
 						telegramChatId = inputNewChatId;
 						GM_setValue("telegramChatId", inputNewChatId);
-						sendTelegramMessage(telegramChatId,"Success! Chat_Id were changed from "+old+" to "+inputNewChatId+" (yours)");
+						sendTelegramMessage(telegramChatId,"Success! Chat_Id were changed from "+old+" to "+inputNewChatId+" (this chat)");
 						try { document.getElementById('chkTelegramNotifyLabel').innerHTML = " Telegram-Notifier ["+telegramChatId+"]"; } catch(err) {}
 					}
 				} else {
