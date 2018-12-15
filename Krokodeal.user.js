@@ -141,7 +141,7 @@ function handleTelegramNotifyChanged(e) {
 					}
 				});
 			} else {
-				if (/^-?[1-9]\d*$/.test(inputNewChatId)) { // is valid number (exclude 0)
+				if (/^-?[0-9]\d*$/.test(inputNewChatId)) { // is valid number (exclude 0)
 					if (inputNewChatId != telegramChatId) { //chat_id were changed
 						var old = telegramChatId;
 						telegramChatId = inputNewChatId;
