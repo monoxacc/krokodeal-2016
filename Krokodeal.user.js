@@ -304,7 +304,7 @@ function initMessBox()
 		var colllink = document.createElement("a");
 			colllink.innerHTML = "&gt;&gt; My Kroko-Collection &lt;&lt;";
 			var colllinkHref = document.createAttribute("href");
-	                colllinkHref.value = "https://www.mydealz.de/halloween/collection",
+	                colllinkHref.value = "https://www.mydealz.de/halloween/collection";
 			//colllinkHref.value = "https://www.mydealz.de/xmas-game/collection";
 			//colllinkHref.value = "https://www.mydealz.de/pepper-festival/collection";
 			var colllinkTarget = document.createAttribute("target");
