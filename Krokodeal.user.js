@@ -7,6 +7,7 @@
 // @include     https://www.mydealz.de/*
 // @exclude     https://www.mydealz.de/xmas-game*
 // @exclude     https://www.mydealz.de/pepper-festival*
+// @exclude     https://www.mydealz.de/halloween*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
 // @version     2018.006
 // @grant       none
@@ -303,7 +304,8 @@ function initMessBox()
 		var colllink = document.createElement("a");
 			colllink.innerHTML = "&gt;&gt; My Kroko-Collection &lt;&lt;";
 			var colllinkHref = document.createAttribute("href");
-			colllinkHref.value = "https://www.mydealz.de/xmas-game/collection";
+	                colllinkHref.value = "https://www.mydealz.de/halloween/collection",
+			//colllinkHref.value = "https://www.mydealz.de/xmas-game/collection";
 			//colllinkHref.value = "https://www.mydealz.de/pepper-festival/collection";
 			var colllinkTarget = document.createAttribute("target");
 			colllinkTarget.value = "_blank";
