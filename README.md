@@ -1,6 +1,6 @@
 # krokodeal-2016
 Krokodeal hunt script for Tampermonkey.
-*Also works for ~~2017~~ 2018 !*
+*Also works for ~~2017~~ ~~2018~~ 2019!*
 
 #### This is an experimental script for educational purposes only.
 
@@ -15,7 +15,7 @@ Krokodeal hunt script for Tampermonkey.
 - randomized browse and click -time behaviour
 - get notificated by a catch with the Telegram messenger
 - ban prevention - this will take a 2h break after a collection of 15 Krokos (the real deadline is possibly the continuous collection of 20 Krokos)
-- possibly ETA calculation for next Kroko
+- ETA calculation for next Kroko
 
 ### First Steps
 
