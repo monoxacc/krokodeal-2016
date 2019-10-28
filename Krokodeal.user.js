@@ -9,7 +9,7 @@
 // @exclude     https://www.mydealz.de/pepper-festival*
 // @exclude     https://www.mydealz.de/halloween*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
-// @version     2018.006
+// @version     2019.001
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -561,7 +561,7 @@ $(document).ajaxComplete(function(e,r,s)
 		// detect, that Kroko were catched & scrap text for telegram notify
 		var bCatched = detectKrokoCatched(r.responseJSON.data.content);
 		if (bCatched) {
-			addLog(getTimeStamp() +": Kroko catched! ["+krokoCounter+"/"+krokoCounterLimit+"]");
+			addLog(getTimeStamp() +": Kroko catched! ["+krokoCounter+"/"+krokoCounterLimit+"]: "+krokoCatchedText);
 			setLastKrokoClickedAndETA(); // avgTime calc & save lastKrokoClicked-Timestamp
 			krokoCounter = krokoCounter + 1;
 			GM_setValue("krokoCounter", krokoCounter);
