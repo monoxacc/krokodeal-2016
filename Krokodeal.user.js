@@ -10,7 +10,7 @@
 // @exclude     https://www.mydealz.de/halloween*
 // @exclude     https://www.mydealz.de/flamedeer*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
-// @version     2019.002
+// @version     2020.001
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -230,7 +230,7 @@ function setLastKrokoClickedAndETA() {
 
 function addLog(text)
 {
-	var savedLogs = GM_getValue("requeststats", null);
+	var savedLogs = GM_getValue("requeststats", "");
 	GM_setValue("requeststats", savedLogs + text +"\r\n");
 }
 
@@ -240,7 +240,7 @@ function popUp(content){
     var movefromedge=0;
     placementx=(ScreenWidth/2)-((400)/2);
     placementy=(ScreenHeight/2)-((300+50)/2);
-    WinPop=window.open("About:Blank","","width=400,height=300,toolbar=0,location=0,directories=0,status=0,scrollbars=0,menubar=0,resizable=0,left="+placementx+",top="+placementy+",scre enX="+placementx+",screenY="+placementy+",");
+    WinPop=window.open("","","width=800,height=300,toolbar=0,location=0,directories=0,status=0,scrollbars=0,menubar=0,resizable=0,left="+placementx+",top="+placementy+",scre enX="+placementx+",screenY="+placementy+",");
     WinPop.document.write('<html>\n<head>\n</head>\n<body><span style="white-space: pre-line">'+content+'</span></body></html>');
 }
 
@@ -253,8 +253,10 @@ function saveStringAsFile(text)
 
 function getTimeStamp()
 {
-	var d = new Date()
-	return d.getFullYear()*100000000+(d.getMonth()+1)*1000000+d.getDate()*10000+d.getHours()*100+d.getMinutes();
+	var d = new Date();
+	var theDate = d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate()
+	var theTime = d.getHours()*100+d.getMinutes();
+	return "{0}_{1}".format(theDate, theTime)
 }
 
 // returns true, if a Kroko were catched and sets krokoCatchedText for telegram notification
@@ -309,9 +311,8 @@ function initMessBox()
 			    case 10:
 			        colllinkHref.value = "https://www.mydealz.de/halloween/collection";
 			        break;
-			    case 12:
+			    default:
 			        colllinkHref.value = "https://www.mydealz.de/flamedeer/collection";
-			        break;
 			}
 			var colllinkTarget = document.createAttribute("target");
 			colllinkTarget.value = "_blank";
