@@ -10,7 +10,7 @@
 // @exclude     https://www.mydealz.de/halloween*
 // @exclude     https://www.mydealz.de/flamedeer*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
-// @version     2020.001
+// @version     2020.002
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -471,6 +471,14 @@ function goNextPage(sec)
 function getReloadTimeleft(targetTime)
 {
 	return ( ( targetTime - new Date().getTime() ) / 1000 ).toFixed(1);
+}
+
+String.prototype.format = function() {
+  a = this;
+  for (k in arguments) {
+    a = a.replace("{" + k + "}", arguments[k])
+  }
+  return a
 }
 
 /*  ===========================
