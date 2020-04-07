@@ -10,7 +10,7 @@
 // @exclude     https://www.mydealz.de/halloween*
 // @exclude     https://www.mydealz.de/flamedeer*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
-// @version     2020.002
+// @version     2020.003
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -87,81 +87,38 @@ GM_addStyle(styleCSS);
 /*  ===========================
 		Functions
 	===========================  */
-
-function sendTelegramMessage(chat_id, msg) {
-	if((chat_id != null || chat_id != "")  && msg != null) {
-		console.log(getTimeStamp() + "try to sendTelegramMessage() params: chat_id="+chat_id+" msg="+msg);
+function sendDiscordMessage(msg) {
+    if(msg != null) {
+		console.log(getTimeStamp() + "try to sendDiscordMessage() params: msg="+msg);
 		$.ajax({
-			'type': 'POST',
-			'url': 'https://api.telegram.org/bot'+ telegramToken +'/sendMessage',
-			'contentType': 'application/x-www-form-urlencoded',
-			'data': JSON.parse('{"chat_id":"'+chat_id+'","text":"'+msg+'"}'),
-			'dataType': 'json',
-			'success': function() { }
+			type: 'POST',
+            headers: null,
+			url: discordHookURL,
+            beforeSend: function(a,b){console.log(a,b)},
+			contentType: 'application/json',
+			data: '{"content":'+JSON.stringify(msg)+'}',
+			dataType: 'json',
+			success: function() { }
 		});
 	} else {
-		console.log(getTimeStamp() + "ERROR: sendTelegramMessage() bad params: chat_id="+chat_id+" msg="+msg);
+		console.log(getTimeStamp() + "ERROR: sendDiscordMessage() bad params: msg="+msg);
 	}
 }
 
 function handleTelegramNotifyChanged(e) {
 	var chkTelegramNotify = e.target;
 	if (chkTelegramNotify.checked) {
-		if(telegramToken == "") { //check telegramToken is set
-			var inputToken = prompt("Please set your Telegram-Bot token!");
-			if (inputToken == null) { //user aborted
-				chkTelegramNotify.checked = false;
-				return 0;
-			} else {
-				//TODO: test token api method getMe()
-				telegramToken = inputToken;
-				GM_setValue("telegramToken", inputToken);
-			}
-		}
-		var code = getRandomString();
-		var inputNewChatId = prompt("Please set your chat_id here.\r\nIf you have no chat_id, leave the field blank and send the following code to your Telegram-Bot, AFTER SENDING press OK\r\n\r\n" + code, telegramChatId);
-		if (inputNewChatId != null) { // user pressed OK
-			inputNewChatId = inputNewChatId.trim();
-			if (inputNewChatId == "") { //user has no chat_id, find chat_id
-				$.ajax({
-					'type': 'POST',
-					'url': 'https://api.telegram.org/bot'+ telegramToken +'/getUpdates',
-					'contentType': 'application/x-www-form-urlencoded',
-					'data': JSON.parse('{"offset":"-1"}'),
-					'dataType': 'json',
-					'success': function(d,s,r) {
-						var success = d.result[0].message.text == code;
-						if(success) {
-							telegramChatId = d.result[0].message.chat.id;
-							GM_setValue("telegramChatId", d.result[0].message.chat.id);
-							sendTelegramMessage(telegramChatId, "Success! Your Chat_Id is "+telegramChatId);
-							try { document.getElementById('chkTelegramNotifyLabel').innerHTML = " Telegram-Notifier ["+telegramChatId+"]"; } catch(err) {}
-						} else {
-							chkTelegramNotify.checked = false;
-						}
-						alert(success ? "Success! Your Chat_Id is "+telegramChatId : "Failed, please try again.");
-					}
-				});
-			} else {
-				if (/^-?[0-9]\d*$/.test(inputNewChatId)) { // is valid number (exclude 0)
-					if (inputNewChatId != telegramChatId) { //chat_id were changed
-						var old = telegramChatId;
-						telegramChatId = inputNewChatId;
-						GM_setValue("telegramChatId", inputNewChatId);
-						sendTelegramMessage(telegramChatId,"Success! Chat_Id were changed from "+old+" to "+inputNewChatId+" (this chat)");
-						try { document.getElementById('chkTelegramNotifyLabel').innerHTML = " Telegram-Notifier ["+telegramChatId+"]"; } catch(err) {}
-					}
-				} else {
-					alert("Chat_id invalid!");
-					chkTelegramNotify.checked = false;
-				}
-			}
-		} else { //user aborted
-			chkTelegramNotify.checked = false;
-		}
+        var input = prompt("Please set your Discord WebHook-URL!", discordHookURL);
+        if (input == null) { //user aborted
+            chkTelegramNotify.checked = false;
+            return 0;
+        } else {
+            discordHookURL = input;
+            GM_setValue("discordHookURL", input);
+        }
 	}
-	bTelegramNotify = chkTelegramNotify.checked;
-	GM_setValue("bTelegramNotify", chkTelegramNotify.checked);
+	bDiscordNotify = chkTelegramNotify.checked;
+	GM_setValue("bDiscordNotify", chkTelegramNotify.checked);
 }
 
 function handleTabLockChanged(e) {
@@ -353,16 +310,16 @@ function initMessBox()
 	checkboxes.appendChild(chkAutoCatch);
 	checkboxes.appendChild(chkAutoCatchLabel);
 	checkboxes.appendChild(document.createElement('br'));
-		//  Checkbox Telegram-Notifier
+		//  Checkbox Discord-Notifier
 		var chkTelegramNotify = document.createElement('input');
 			chkTelegramNotify.id = "chkTelegramNotify";
 			chkTelegramNotify.type = "checkbox";
-			chkTelegramNotify.checked = (bTelegramNotify === 'true');
+			chkTelegramNotify.checked = (bDiscordNotify === 'true');
 			chkTelegramNotify.onchange = handleTelegramNotifyChanged;
 		var chkTelegramNotifyLabel = document.createElement('label');
 			chkTelegramNotifyLabel.id = "chkTelegramNotifyLabel";
 			chkTelegramNotifyLabel.for = chkTelegramNotify.id;
-			chkTelegramNotifyLabel.innerHTML = " Telegram-Notifier ["+telegramChatId+"]";
+			chkTelegramNotifyLabel.innerHTML = " Discord-Notifier";
 	checkboxes.appendChild(chkTelegramNotify);
 	checkboxes.appendChild(chkTelegramNotifyLabel);
 	box.appendChild(checkboxes);
@@ -402,21 +359,8 @@ function initMessBox()
 				if (confirm('Clear logs?')) GM_setValue("requeststats", "");
 			};
 	inputbox.appendChild(btnClearStats);
-		// set TelegramToken button
-		var btnTelegramToken = document.createElement('input');
-			btnTelegramToken.id = "btnTelegramToken";
-			btnTelegramToken.type = "button";
-			btnTelegramToken.value = "set TelegramToken";
-			btnTelegramToken.onclick = function() {
-				var inputToken = prompt("Please set your Telegram-Bot token!", telegramToken);
-				if (inputToken != null) { //user not aborted
-					telegramToken = inputToken;
-					GM_setValue("telegramToken", inputToken);
-				}
-			};
-	inputbox.appendChild(btnTelegramToken);
 	box.appendChild(inputbox);
-	
+
 	document.getElementsByTagName("body")[0].appendChild(box);
 }
 
@@ -474,8 +418,8 @@ function getReloadTimeleft(targetTime)
 }
 
 String.prototype.format = function() {
-  a = this;
-  for (k in arguments) {
+  let a = this;
+  for (let k in arguments) {
     a = a.replace("{" + k + "}", arguments[k])
   }
   return a
@@ -493,9 +437,8 @@ var bAutoCatch = GM_getValue("bAutoCatch", "true");
 var avgKrokoTime = parseInt(GM_getValue("avgKrokoTime", 60 * 60 * 1000)); //default = 1h in ms
 var lastKrokoClickedTime = parseInt(GM_getValue("lastKrokoClicked", 0));
 
-var telegramToken = GM_getValue("telegramToken","");
-var telegramChatId = GM_getValue("telegramChatId", "");
-var bTelegramNotify = GM_getValue("bTelegramNotify", (telegramChatId != "").toString());
+var discordHookURL = GM_getValue("discordHookURL", "");
+var bDiscordNotify = GM_getValue("bDiscordNotify", (discordHookURL != "").toString());
 
 var krokoCounter = parseInt(GM_getValue("krokoCounter",0));
 var krokoCounterLimit = 15; // max:20 (collect >20 krokos one behind the other = ban)
@@ -512,9 +455,8 @@ if (bDebug) {
 	console.log("bAutoCatch:",bAutoCatch);
 	console.log("avgKrokoTime:",avgKrokoTime);
 	console.log("lastKrokoClickedTime:",lastKrokoClickedTime);
-	console.log("telegramToken:",telegramToken);
-	console.log("telegramChatId:",telegramChatId);
-	console.log("bTelegramNotify:",bTelegramNotify);
+	console.log("discordHookURL:",discordHookURL);
+	console.log("bDiscordNotify:",bDiscordNotify);
 	console.log("krokoCounter:",krokoCounter);
 	console.log("krokoCounterLimit:",krokoCounterLimit);
 	console.log("krokoCounterLimitReached:",krokoCounterLimitReached);
@@ -546,6 +488,7 @@ $(document).ajaxComplete(function(e,r,s)
 
 			if (!krokoCounterLimitReached) {
 				addLog(getTimeStamp() +": Kroko appeared ["+ catchKey +"] trying to catch..");
+                //sendDiscordMessage(getUsername() + ": Kroko appeared ["+ catchKey +"]");
 				titleBlinking();
 				if(bAutoCatch === 'true') {
 					handleKroko();
@@ -558,7 +501,6 @@ $(document).ajaxComplete(function(e,r,s)
 			}
 		} else { // no Kroko appeared
 			addLog(getTimeStamp() +": Kroko nearby..");
-			
 			if (!krokoCounterLimitReached) {
 				setMessBoxSpanText("statusspan", "There is something...maybe next page!!", "orange");
 				if (!bDebug) {
@@ -584,8 +526,8 @@ $(document).ajaxComplete(function(e,r,s)
 			addLog(getTimeStamp() +": Kroko NOT catched! ["+krokoCounter+"/"+krokoCounterLimit+"] krokoCatchedText: "+krokoCatchedText);
 		}
 
-		if (bTelegramNotify === 'true') {
-			sendTelegramMessage(telegramChatId, getUsername() + ": " + krokoCatchedText);
+		if (bDiscordNotify === 'true') {
+            sendDiscordMessage(getUsername() + ": " + krokoCatchedText);
 		}
 	}
 });
@@ -622,7 +564,7 @@ setMessBoxSpanText("statusspan", "Watch out for Kroko...", "greenyellow");
 var links = $.map($('a[href]'), 
 	function(e)
 	{
-		var regEx = new RegExp("^https:\/\/www\.mydealz\.de\/(deals|gutscheine|freebies).*$");		
+		var regEx = new RegExp("^https:\/\/www\.mydealz\.de\/(deals|gutscheine|freebies).*$");
 		var bIsValid = regEx.test(e.href);
 		var bIsCurrentPage = (e.href == window.location.href)
 		var bContainsHash = e.href.indexOf("#") > -1;
