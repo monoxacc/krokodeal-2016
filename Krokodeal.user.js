@@ -10,8 +10,7 @@
 // @exclude     https://www.mydealz.de/halloween*
 // @exclude     https://www.mydealz.de/flamedeer*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
-// @require     https://code.jquery.com/jquery-3.5.1.min.js
-// @version     2020.007
+// @version     2020.008
 // @noframes
 // @run-at document-end
 // @grant       none
