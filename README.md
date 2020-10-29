@@ -23,7 +23,7 @@ Krokodeal hunt script for Tampermonkey.
 2. Click the link to [raw Krokodeal.user.js](https://github.com/monoxacc/krokodeal-2016/raw/master/Krokodeal.user.js)
 3. Tampermonkey asks to install script
 4. Navigate to a deal page
-5. Chill and wait - one tab is enough, there is no benefit by using more than one browser tab
+5. Chill and wait
 
 ### Discord Notifier
 
@@ -35,6 +35,7 @@ Krokodeal hunt script for Tampermonkey.
 
 ### Hints
 
+- one tab is enough, there is no benefit by using more than one browser tab
 - To prevent that the bot will stuck (e.g. caused by internet connection errors like timeout/server unreachable) you can use [AutoRefresh](https://chrome.google.com/webstore/detail/auto-refresh/ifooldnmmcmlbdennkpdnlnbgbmfalko) with 30 or 45min configured.
 
 ### ~~Telegram Notifier~~
