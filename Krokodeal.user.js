@@ -10,7 +10,7 @@
 // @exclude     https://www.mydealz.de/halloween*
 // @exclude     https://www.mydealz.de/flamedeer*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
-// @version     2020.003
+// @version     2020.004
 // @grant       none
 // ==/UserScript==
 //   /==========\
@@ -266,7 +266,8 @@ function initMessBox()
 			var colllinkHref = document.createAttribute("href");
 			switch ((new Date).getMonth()+1) {
 			    case 10:
-			        colllinkHref.value = "https://www.mydealz.de/halloween/collection";
+				colllinkHref.value = "https://www.mydealz.de/flamedeer/collection";
+			        //colllinkHref.value = "https://www.mydealz.de/halloween/collection";
 			        break;
 			    default:
 			        colllinkHref.value = "https://www.mydealz.de/flamedeer/collection";
