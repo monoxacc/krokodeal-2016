@@ -10,7 +10,7 @@
 // @exclude     https://www.mydealz.de/halloween*
 // @exclude     https://www.mydealz.de/flamedeer*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
-// @version     2020.008
+// @version     2020.009
 // @noframes
 // @run-at document-end
 // @grant       none
@@ -163,7 +163,6 @@ function setMessBoxSpanText(span,text,color)
 	var MessBoxSpan = document.getElementById(span);
 	if(MessBoxSpan==null)
 	{ console.log("Konnte MessBoxSpan nicht finden!"); return; }
-	
 	if(color!="") MessBoxSpan.style.color = color;
 	MessBoxSpan.innerHTML = text;
 }
@@ -243,7 +242,7 @@ function initMessBox()
 {
 	var box = document.createElement('div');
 	box.id = "MessBox";
-	
+
 	var script_version = GM_info.script.version;
 	var headline = document.createElement("p");
 		headline.innerHTML = "KrokoDEAL-J&auml;ger " + script_version;
@@ -261,7 +260,7 @@ function initMessBox()
 		spanReload.id = "reloadspan";
 	infospans.appendChild(spanReload);
 	box.appendChild(infospans);
-	
+
 	var collectionlinkP = document.createElement("p");
 		var colllink = document.createElement("a");
 			colllink.innerHTML = "&gt;&gt; My Kroko-Collection &lt;&lt;";
@@ -280,7 +279,7 @@ function initMessBox()
 		colllink.setAttributeNode(colllinkTarget);
 	collectionlinkP.appendChild(colllink);
 	box.appendChild(collectionlinkP);
-		
+
 	var checkboxes = document.createElement("p");
 		var checkboxesClass = document.createAttribute("class");
 			checkboxesClass.value = "left-align";
@@ -309,9 +308,24 @@ function initMessBox()
 			};
 		var chkAutoCatchLabel = document.createElement('label');
 			chkAutoCatchLabel.for = chkAutoCatch.id;
-			chkAutoCatchLabel.innerHTML = " Auto-Catching";
+			chkAutoCatchLabel.innerHTML = " Auto-Catch";
 	checkboxes.appendChild(chkAutoCatch);
 	checkboxes.appendChild(chkAutoCatchLabel);
+	checkboxes.appendChild(document.createElement('br'));
+  		//  Checkbox AutoVote
+		var chkAutoVote = document.createElement('input');
+			chkAutoVote.id = "chkAutoVote";
+			chkAutoVote.type = "checkbox";
+			chkAutoVote.checked = (bAutoVote === 'true');
+			chkAutoVote.onchange = function() {
+				bAutoVote = chkAutoVote.checked;
+				GM_setValue("bAutoVote", chkAutoVote.checked);
+			};
+		var chkAutoVoteLabel = document.createElement('label');
+			chkAutoVoteLabel.for = chkAutoVote.id;
+			chkAutoVoteLabel.innerHTML = " Auto-Vote";
+	checkboxes.appendChild(chkAutoVote);
+	checkboxes.appendChild(chkAutoVoteLabel);
 	checkboxes.appendChild(document.createElement('br'));
 		//  Checkbox Discord-Notifier
 		var chkTelegramNotify = document.createElement('input');
@@ -396,8 +410,8 @@ function handleKroko()
 	{
 		setTimeout(function(){ button.click(); }, getRandomInt(2000, 3000));
 		setMessBoxSpanText("statusspan", "Kroko found & clicked!", "greenyellow");
-	} else { 
-		console.log("object 'div.link' not found!"); 
+	} else {
+		console.log("object 'div.link' not found!");
 	}
 }
 
@@ -413,6 +427,19 @@ function goNextPage(sec)
 	idTimeoutNextPage = setTimeout(function(){
 		window.location.href = nextPage;
 	}, countdown);
+}
+
+function voteRandom(sec) {
+    let countdown = sec * 1000;
+    let voteBtnCnt = $('.vote-btn').length;
+    if(voteBtnCnt > 0) {
+        clearTimeout(idTimeoutVote);
+        idTimeoutVote = setTimeout(function(){
+            $('.vote-btn')[getRandomInt(0, voteBtnCnt-1)].click();
+            addLog(getTimeStamp() +"Voted.");
+            console.log("Voted.");
+        }, countdown);
+    }
 }
 
 function getReloadTimeleft(targetTime)
@@ -447,9 +474,12 @@ var krokoCounter = parseInt(GM_getValue("krokoCounter",0));
 var krokoCounterLimit = 15; // max:20 (collect >20 krokos one behind the other = ban)
 var krokoCounterLimitReached = krokoCounter >= krokoCounterLimit;
 
+var bAutoVote = GM_getValue("bAutoVote", "false");
+
 var krokoCatchedText = "";
 
 // Timer IDs
+var idTimeoutVote = 0;
 var idIntervalReloadspan = 0;
 var idTimeoutNextPage = 0;
 
@@ -564,7 +594,7 @@ if (krokoCounterLimitReached) {
 setMessBoxSpanText("statusspan", "Watch out for Kroko...", "greenyellow");
 
 //Links zu Deals scrapen
-var links = $.map($('a[href]'), 
+var links = $.map($('a[href]'),
 	function(e)
 	{
 		var regEx = new RegExp("^https:\/\/www\.mydealz\.de\/(deals|gutscheine|freebies).*$");
@@ -581,4 +611,5 @@ var links = $.map($('a[href]'),
 var nextPage = links[getRandomInt(0, links.length-1)].href;
 delete links;
 
+if(bAutoVote === 'true') { voteRandom(getRandomInt(30, 120)) }
 goNextPage(getRandomInt(120, 600));
