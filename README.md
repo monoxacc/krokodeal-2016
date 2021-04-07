@@ -1,6 +1,6 @@
 # krokodeal-2016
 Krokodeal hunt script for Tampermonkey.
-*Also works for ~~2017~~ ~~2018~~ ~~2019~~ 2020!*
+*Also works for ~~2017~~ ~~2018~~ ~~2019~~ ~~2020~~ 2021!*
 
 #### This is an experimental script for educational purposes only.
 
