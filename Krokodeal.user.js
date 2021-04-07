@@ -10,7 +10,7 @@
 // @exclude     https://www.mydealz.de/halloween*
 // @exclude     https://www.mydealz.de/flamedeer*
 // @require     https://gist.githubusercontent.com/arantius/3123124/raw/grant-none-shim.js
-// @version     2021.001
+// @version     2021.002
 // @noframes
 // @run-at document-end
 // @grant       none
@@ -139,7 +139,14 @@ function handleTabLockChanged(e) {
 
 function getUsername() {
 	try {
-		return document.getElementsByClassName('navDropDown-head')[0].innerText.trim();
+        // getting username from whole page HTML (really, i found no better approach..)
+        var regEx = new RegExp('\"currentUser\"\:(.*)\};');
+		var match = document.documentElement.innerHTML.match(regEx);
+		if (match) {
+			var currentUserJSON = match[1];
+            var currentUserObj = JSON.parse(currentUserJSON);
+            return currentUserObj.username;
+        }
 	} catch(err) {
 	}
 	return '';
